@@ -142,6 +142,7 @@ export const site = {
     title: 'Anatomija kvara',
     intro: 'Pet delova koji najčešće zakažu. Skroluj i pogledaj šta se dešava iznutra.',
     finale: 'Sastavljeno. Bez kapi.',
+    labels: { problem: 'Problem', symptom: 'Simptom', fix: 'Šta Mile radi' },
     steps: [
       {
         id: 'gasket',

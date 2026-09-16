@@ -8,7 +8,7 @@ import { AnatomyAssembly } from '@/components/svg/AnatomyAssembly'
 import { cn } from '@/lib/utils'
 
 /** Card micro-labels. Business copy lives in site.ts; these three are UI chrome. */
-const LABELS = { problem: 'Problem', symptom: 'Simptom', fix: 'Šta Mile radi' } as const
+const LABELS = site.anatomy.labels
 
 /** Where each part travels when it is taken out of the assembly (SVG user units). */
 const EXPLODE: Record<AnatomyPartId, gsap.TweenVars> = {
@@ -119,7 +119,7 @@ export function Anatomy() {
       const sync = () => {
         const time = tl.time()
         // The counter flips with the card cross-fade, not with the part motion.
-        const index = Math.min(STEPS.length - 1, Math.max(0, Math.floor((time - 0.25) / STEP_SPAN)))
+        const index = Math.min(STEPS.length - 1, Math.max(0, Math.floor((time - 0.15) / STEP_SPAN)))
         const inFinale = time >= FINALE_AT + 0.35
         if (index === lastIndex && inFinale === lastFinale) return
         lastIndex = index
@@ -143,8 +143,8 @@ export function Anatomy() {
         tl.to(cards[i], { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at + 0.1)
         tl.to(body, { x: 0, y: 0, rotate: 0, duration: 0.7, ease: 'power2.inOut' }, at + 1)
         tl.to(light, { opacity: 0, duration: 0.45 }, at + 1)
-        // Cards cross-fade: the outgoing one leaves just as the next one arrives.
-        tl.to(cards[i], { opacity: 0, y: -20, duration: 0.4 }, i === STEPS.length - 1 ? FINALE_AT : at + STEP_SPAN + 0.05)
+        // Hand-off: the outgoing card finishes leaving exactly as the next one starts.
+        tl.to(cards[i], { opacity: 0, y: -20, duration: 0.3 }, i === STEPS.length - 1 ? FINALE_AT : at + STEP_SPAN - 0.2)
       })
 
       tl.addLabel('finale', FINALE_AT)

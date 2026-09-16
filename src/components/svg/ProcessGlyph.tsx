@@ -2,47 +2,79 @@ import { TUBE } from './pipe-style'
 
 export type GlyphKind = 'contact' | 'diagnose' | 'repair' | 'warranty'
 
-const COMMON = {
+const CORNERS = 'M8 22 V8 H22 M98 8 H112 V22 M8 98 V112 H22 M112 98 V112 H98'
+
+const COPPER = {
   fill: 'none',
-  strokeWidth: 1.8,
+  stroke: TUBE.copper,
+  strokeWidth: 2.6,
   strokeLinecap: 'round',
   strokeLinejoin: 'round',
 } as const
 
-/** Small technical line glyphs for the four steps of the process story. */
+const ACCENT = {
+  fill: 'none',
+  stroke: TUBE.water,
+  strokeWidth: 3,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+} as const
+
+/**
+ * Step drawings in the same technical-sheet language as the anatomy assembly:
+ * thin guide lines, copper line work, one water-cyan accent. Decorative.
+ */
 export function ProcessGlyph({ kind, className }: { kind: GlyphKind; className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={className} aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 120 120" className={className} aria-hidden="true" focusable="false">
+      <g fill="none" stroke={TUBE.guide} strokeWidth="1">
+        <path d={CORNERS} opacity="0.85" />
+        {kind === 'contact' || kind === 'warranty' ? <path d="M60 6 V114" strokeDasharray="4 8" opacity="0.7" /> : null}
+        {kind === 'diagnose' ? <path d="M6 64 H114" strokeDasharray="4 8" opacity="0.7" /> : null}
+        {kind === 'repair' ? <circle cx="84" cy="34" r="30" strokeDasharray="4 8" opacity="0.7" /> : null}
+        {kind === 'warranty' ? <circle cx="60" cy="60" r="46" strokeDasharray="4 8" opacity="0.55" /> : null}
+      </g>
+
       {kind === 'contact' ? (
-        <g {...COMMON} stroke={TUBE.copper}>
-          <path d="M6 12a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H20l-9 8v-8h-1a4 4 0 0 1-4-4Z" />
-          <g stroke={TUBE.water}>
-            <path d="M16 21h.01M24 21h.01M32 21h.01" strokeWidth="3.2" />
-          </g>
+        <g>
+          <path
+            {...COPPER}
+            d="M26 28 H94 Q102 28 102 36 V72 Q102 80 94 80 H54 L40 94 V80 H26 Q18 80 18 72 V36 Q18 28 26 28 Z"
+          />
+          <path {...COPPER} strokeWidth="2.2" opacity="0.8" d="M30 45 H78 M30 57 H88" />
+          <path {...ACCENT} d="M30 69 H54" />
         </g>
       ) : null}
 
       {kind === 'diagnose' ? (
-        <g {...COMMON} stroke={TUBE.copper}>
-          <path d="M4 34h10M34 14h10" />
-          <path d="M14 30h6M28 18h6" strokeOpacity="0.55" />
-          <circle cx="24" cy="24" r="11" />
-          <path d="M32 32l10 10" />
-          <path d="M19 24a5 5 0 0 1 5-5" stroke={TUBE.water} />
+        <g>
+          <path {...COPPER} d="M8 56 H112 M8 72 H112" />
+          <path {...COPPER} d="M46 48 H74 V80 H46 Z" fill={TUBE.cavity} />
+          <path {...COPPER} strokeWidth="1.8" opacity="0.55" d="M54 51 V77 M66 51 V77" />
+          <circle {...COPPER} cx="62" cy="54" r="30" />
+          <path {...COPPER} strokeWidth="4.4" d="M83 75 L102 94" />
+          <path {...ACCENT} strokeWidth="2.6" d="M42 50 A 20 20 0 0 1 56 36" />
+          <path fill={TUBE.water} d="M60 86 c -5 6 -7 9 -7 12 a 7 7 0 0 0 14 0 c 0 -3 -2 -6 -7 -12 Z" />
         </g>
       ) : null}
 
       {kind === 'repair' ? (
-        <g {...COMMON} stroke={TUBE.copper}>
-          <path d="M31 6a10 10 0 0 0-9 15L9 34a4.5 4.5 0 0 0 6 6l13-13a10 10 0 0 0 12-14l-6 6-6-1-1-6Z" />
-          <path d="M13 36h.01" strokeWidth="3.2" stroke={TUBE.water} />
+        <g>
+          <path
+            {...COPPER}
+            d="M77.5 15 a25 25 0 0 0 -22.5 37.5 L22.5 85 a11.25 11.25 0 0 0 15 15 L75 67.5 a25 25 0 0 0 30 -35 l-15 15 l-15 -2.5 l-2.5 -15 Z"
+          />
+          <path {...ACCENT} strokeWidth="2.6" d="M106 48 A 26 26 0 0 0 100 16" />
+          <path {...ACCENT} strokeWidth="2.6" d="M93 18 L100 15 L102 23" />
+          <circle cx="33" cy="89" r="4" fill={TUBE.water} />
         </g>
       ) : null}
 
       {kind === 'warranty' ? (
-        <g {...COMMON} stroke={TUBE.copper}>
-          <path d="M24 5l15 6v11c0 10-6.5 17.5-15 21-8.5-3.5-15-11-15-21V11Z" />
-          <path d="M17 23.5l5 5 10-10" stroke={TUBE.water} strokeWidth="2.4" />
+        <g>
+          <path {...COPPER} d="M60 14 L102 30 V56 C102 82 84 98 60 106 C36 98 18 82 18 56 V30 Z" />
+          <path {...COPPER} strokeWidth="1.8" opacity="0.5" d="M60 20 L96 34 V56 c0 22 -15 36 -36 44" />
+          <path {...ACCENT} strokeWidth="5" d="M41 58 L55 72 L81 44" />
         </g>
       ) : null}
     </svg>

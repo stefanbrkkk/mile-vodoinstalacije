@@ -71,6 +71,7 @@ export function Testimonials() {
   const reducedMotion = useReducedMotion()
   const headingId = useId()
   const wrapRef = useRef<HTMLDivElement | null>(null)
+  const toggleRef = useRef<HTMLButtonElement | null>(null)
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
   const [pausedByUser, setPausedByUser] = useState(false)
@@ -98,14 +99,22 @@ export function Testimonials() {
           className="relative mt-10 flex flex-col gap-5 overflow-hidden py-2"
           onPointerEnter={() => setHovered(true)}
           onPointerLeave={() => setHovered(false)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={(e) => {
+            // The toggle button is the only focusable thing in here; its own focus is
+            // already reflected by aria-pressed, so it should not also force a pause
+            // that a "play" click on it could then never lift.
+            if ((e.target as HTMLElement) !== toggleRef.current) setFocused(true)
+          }}
+          onBlur={(e) => {
+            if ((e.target as HTMLElement) !== toggleRef.current) setFocused(false)
+          }}
         >
           {ROWS.map((row) => (
             <MarqueeRow key={row.duration} {...row} paused={paused} />
           ))}
 
           <button
+            ref={toggleRef}
             type="button"
             aria-pressed={pausedByUser}
             aria-label={pausedByUser ? 'Pokreni utiske' : 'Zaustavi utiske'}

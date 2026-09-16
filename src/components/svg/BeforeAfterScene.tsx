@@ -15,38 +15,46 @@ const FLOOR_Y = 428
 const PUDDLE_CY = 452
 
 const RUST = {
-  shadow: '#241d13',
-  iron: '#6b6354',
-  rust: '#8a4a24',
-  verdigris: '#57624a',
+  shadow: '#211a10',
+  iron: '#8a8168',
+  rust: '#9a4f22',
+  rustDeep: '#5e2f10',
+  verdigris: '#6c7a52',
   stain: '#04100a',
 } as const
 
-/** Weathered copper: a dull iron body with broken rust/verdigris hatching instead of a smooth gradient. */
+/** Fixed, hand-placed corrosion blotches along the pipe run (deterministic, not random). */
+const BLOTCHES: { x: number; ry: number; dy: number; color: string; opacity: number }[] = [
+  { x: 46, ry: 7, dy: -1, color: RUST.rust, opacity: 0.85 },
+  { x: 108, ry: 5, dy: 2, color: RUST.verdigris, opacity: 0.7 },
+  { x: 176, ry: 8, dy: 0, color: RUST.rustDeep, opacity: 0.9 },
+  { x: 214, ry: 4, dy: -3, color: RUST.rust, opacity: 0.6 },
+  { x: 372, ry: 6, dy: 2, color: RUST.verdigris, opacity: 0.65 },
+  { x: 408, ry: 5, dy: -2, color: RUST.rust, opacity: 0.8 },
+  { x: 620, ry: 7, dy: -1, color: RUST.rustDeep, opacity: 0.85 },
+  { x: 662, ry: 4, dy: 3, color: RUST.verdigris, opacity: 0.6 },
+  { x: 706, ry: 6, dy: 0, color: RUST.rust, opacity: 0.75 },
+  { x: 754, ry: 5, dy: -2, color: RUST.rustDeep, opacity: 0.7 },
+]
+
+/** Weathered copper: a dull iron body under scattered rust/verdigris blotches, not a smooth gradient. */
 function RustyPipe({ d }: { d: string }) {
   return (
     <g>
       <path d={d} stroke={RUST.shadow} strokeWidth={19} strokeLinecap="round" fill="none" />
       <path d={d} stroke={RUST.iron} strokeWidth={15} strokeLinecap="round" fill="none" />
-      <path
-        d={d}
-        stroke={RUST.rust}
-        strokeWidth={15}
-        strokeLinecap="round"
-        fill="none"
-        strokeDasharray="6 10"
-        opacity={0.55}
-      />
-      <path
-        d={d}
-        stroke={RUST.verdigris}
-        strokeWidth={4}
-        strokeLinecap="round"
-        fill="none"
-        strokeDasharray="3 27"
-        opacity={0.5}
-        transform="translate(0 4)"
-      />
+      <path d={d} stroke={RUST.shadow} strokeWidth={2} opacity={0.4} strokeDasharray="1 5" fill="none" />
+      {BLOTCHES.map((b) => (
+        <ellipse
+          key={b.x}
+          cx={b.x}
+          cy={PIPE_Y + b.dy}
+          rx={b.ry * 1.6}
+          ry={b.ry}
+          fill={b.color}
+          opacity={b.opacity}
+        />
+      ))}
     </g>
   )
 }
@@ -87,12 +95,12 @@ export function BeforeAfterScene({ variant, className }: { variant: Variant; cla
     >
       <defs>
         <linearGradient id={`ba-wall-${variant}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={before ? '#141810' : '#0c1c29'} />
-          <stop offset="1" stopColor={before ? '#0b0f0a' : '#08141f'} />
+          <stop offset="0" stopColor={before ? '#1c2016' : '#123249'} />
+          <stop offset="1" stopColor={before ? '#0e100a' : '#08141f'} />
         </linearGradient>
         {before ? (
           <radialGradient id="ba-stain">
-            <stop offset="0" stopColor={RUST.stain} stopOpacity="0.7" />
+            <stop offset="0" stopColor={RUST.stain} stopOpacity="0.85" />
             <stop offset="1" stopColor={RUST.stain} stopOpacity="0" />
           </radialGradient>
         ) : null}

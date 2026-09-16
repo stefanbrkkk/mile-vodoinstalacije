@@ -19,33 +19,41 @@ function Panel({
   step,
   index,
   className,
+  layout = 'stack',
   active = false,
 }: {
   step: ProcessStep
   index: number
   className?: string
+  /** 'stack': drawing under the number (track panel). 'row': drawing beside it (list). */
+  layout?: 'stack' | 'row'
   /** Reduced motion shows every step already reached by the water line. */
   active?: boolean
 }) {
+  const glyph = GLYPHS[index] ?? 'repair'
   return (
     <article
       data-panel=""
       data-state={active ? 'on' : 'off'}
-      className={cn(
-        'panel group relative flex flex-col justify-between gap-6 p-6 data-[state=on]:border-water/45 md:p-8',
-        className,
-      )}
+      className={cn('panel group relative flex flex-col p-6 data-[state=on]:border-water/45 md:p-7', className)}
     >
-      <div className="flex items-start justify-between gap-6">
-        <span className="font-mono text-3xl text-line group-data-[state=on]:text-water md:text-4xl">
-          {stepNumber(index)}
-        </span>
-        <ProcessGlyph kind={GLYPHS[index] ?? 'repair'} className="size-10 shrink-0 md:size-12" />
-      </div>
-      <div>
-        <h3 className="display-md text-text">{step.title}</h3>
-        <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{step.description}</p>
-      </div>
+      {layout === 'stack' ? (
+        <>
+          <span className="font-mono text-3xl leading-none text-line group-data-[state=on]:text-water md:text-4xl">
+            {stepNumber(index)}
+          </span>
+          <ProcessGlyph kind={glyph} className="mx-auto my-5 size-[6.5rem] md:size-28" />
+        </>
+      ) : (
+        <div className="flex items-center justify-between gap-4">
+          <span className="font-mono text-3xl leading-none text-line group-data-[state=on]:text-water md:text-4xl">
+            {stepNumber(index)}
+          </span>
+          <ProcessGlyph kind={glyph} className="size-[72px] shrink-0" />
+        </div>
+      )}
+      <h3 className={cn('display-md text-text', layout === 'row' && 'mt-4')}>{step.title}</h3>
+      <p className="mt-2 text-[0.95rem] leading-relaxed text-muted">{step.description}</p>
     </article>
   )
 }
@@ -166,7 +174,7 @@ export function Process() {
                 aria-hidden="true"
                 className="absolute top-8 -left-9 size-[19px] translate-x-[1px] rounded-full border-2 border-copper bg-ink"
               />
-              <Panel step={step} index={i} active={reduced} className="min-h-[9rem]" />
+              <Panel step={step} index={i} layout="row" active={reduced} />
             </li>
           ))}
         </ol>
@@ -194,13 +202,13 @@ export function Process() {
               className="flex w-max flex-col gap-8"
               style={{ paddingLeft: 'calc(var(--gutter) + var(--pipe-x))', paddingRight: '14vw' }}
             >
-              <div className="flex items-stretch gap-6">
+              <div className="flex items-start gap-6">
                 {STEPS.map((step, i) => (
                   <Panel
                     key={step.title}
                     step={step}
                     index={i}
-                    className="h-[min(52vh,25rem)] w-[min(70vw,560px)] shrink-0"
+                    className="w-[min(62vw,520px)] shrink-0"
                   />
                 ))}
               </div>
