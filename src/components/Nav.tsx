@@ -107,7 +107,10 @@ export function Nav() {
       if (e.key !== 'Tab') return
       const panel = panelRef.current
       if (!panel) return
-      const focusable = Array.from(panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'))
+      // The header's own toggle (now the close button) stays visible above the panel and is part of the cycle.
+      const focusable = [hamburger, ...Array.from(panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'))].filter(
+        (el): el is HTMLElement => !!el,
+      )
       if (!focusable.length) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
@@ -264,7 +267,7 @@ export function Nav() {
           aria-modal="true"
           aria-label="Meni"
           className={cn(
-            'fixed inset-0 z-[60] flex flex-col bg-ink px-[var(--gutter)] pt-[var(--nav-height)] pb-10 md:hidden',
+            'fixed inset-0 z-40 flex flex-col bg-ink px-[var(--gutter)] pt-[var(--nav-height)] pb-10 md:hidden',
             'transition-[opacity,transform] duration-300 ease-out motion-reduce:transition-none',
             open ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0',
           )}
