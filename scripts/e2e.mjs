@@ -194,9 +194,10 @@ const scrollTo = async (page, y) => {
   await p4.locator('#pitanja').scrollIntoViewIfNeeded()
   await p4.waitForTimeout(800)
   const faqBtn = p4.locator('#pitanja button[aria-expanded]').first()
-  const controls = await faqBtn.getAttribute('aria-controls')
   await faqBtn.click()
   await p4.waitForTimeout(500)
+  // Radix sets aria-controls once the panel is mounted (open state).
+  const controls = await faqBtn.getAttribute('aria-controls')
   ok('1440: faq button expands + controls panel', (await faqBtn.getAttribute('aria-expanded')) === 'true' && !!controls && (await p4.locator(`[id="${controls}"]`).count()) === 1 && (await p4.locator(`[id="${controls}"]`).isVisible()))
   // before/after slider keyboard
   const slider = p4.locator('#pre-posle [role="slider"]')
