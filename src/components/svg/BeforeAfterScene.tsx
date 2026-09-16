@@ -69,16 +69,15 @@ function CleanPipe() {
   )
 }
 
-/** Wall strap holding the riser in place, corroded or clean. */
+/** Pipe clamp banding the riser to the wall behind it, corroded or clean. */
 function Bracket({ before }: { before: boolean }) {
   const stroke = before ? RUST.iron : TUBE.copper
   const fill = before ? RUST.shadow : TUBE.cavity
   return (
     <g transform={`translate(${RISER_X} ${BRACKET_Y})`}>
-      <path d="M-19 -6 H-11 M-19 6 H-11" stroke={stroke} strokeWidth={2.2} strokeLinecap="round" />
-      <rect x="-12" y="-7" width="24" height="14" rx="3" fill={fill} stroke={stroke} strokeWidth={before ? 3 : 2.4} />
-      <circle cx="-6" cy="0" r="1.5" fill={stroke} />
-      <circle cx="6" cy="0" r="1.5" fill={stroke} />
+      <rect x="-17" y="-6.5" width="34" height="13" rx="4" fill={fill} stroke={stroke} strokeWidth={before ? 3 : 2.4} />
+      <circle cx="-11" cy="0" r="1.6" fill={stroke} />
+      <circle cx="11" cy="0" r="1.6" fill={stroke} />
     </g>
   )
 }
