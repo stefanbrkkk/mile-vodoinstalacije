@@ -193,7 +193,6 @@
     background: rgb(14 34 51 / 0.72);
     border: 1px solid rgb(30 58 82 / 0.9);
     backdrop-filter: blur(18px) saturate(1.2);
-    -webkit-backdrop-filter: blur(18px) saturate(1.2);
   }
 
   .panel {

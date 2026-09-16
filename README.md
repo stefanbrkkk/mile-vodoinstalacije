@@ -56,7 +56,7 @@ npx vercel --prod   # produkcija
 ```
 src/config/site.ts        poslovni podaci i tekstovi (jedini izvor istine)
 src/lib/                  scroll sistem (Lenis + ScrollTrigger), GSAP hook, media upiti
-src/components/           navigacija, cev, loader, kursor, UI primitivi
+src/components/           navigacija, cev, loader, UI primitivi
 src/components/sections/  sekcije stranice, redom kao na sajtu
 src/components/svg/       autorske SVG ilustracije i ikone
 scripts/                  screenshot, e2e i Lighthouse pomoćni skriptovi

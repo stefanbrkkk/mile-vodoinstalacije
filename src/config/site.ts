@@ -140,7 +140,7 @@ export const site = {
 
   anatomy: {
     title: 'Anatomija kvara',
-    intro: 'Pet delova koji najčešće zakažu. Skroluj i pogledaj šta se dešava iznutra.',
+    intro: 'Pet delova koji najčešće zakažu. Pomerajte stranicu nadole i pogledajte šta se dešava iznutra.',
     finale: 'Sastavljeno. Bez kapi.',
     labels: { problem: 'Problem', symptom: 'Simptom', fix: 'Šta Mile radi' },
     steps: [

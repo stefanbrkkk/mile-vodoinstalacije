@@ -113,6 +113,24 @@ export function Services() {
       card.dataset.active = 'false'
     }
 
+    // Pointer moves arrive faster than frames; measure and write at most once per frame.
+    let frame = 0
+    let pending: { card: HTMLElement; x: number; y: number } | null = null
+    const apply = () => {
+      frame = 0
+      if (!pending) return
+      const { card, x, y } = pending
+      pending = null
+      const rect = card.getBoundingClientRect()
+      const relX = (x - rect.left) / rect.width
+      const relY = (y - rect.top) / rect.height
+      card.style.setProperty('--mx', `${relX * 100}%`)
+      card.style.setProperty('--my', `${relY * 100}%`)
+      card.dataset.active = 'true'
+      const q = quickies.get(card)
+      q?.ry((relX - 0.5) * 2 * MAX_TILT)
+      q?.rx((0.5 - relY) * 2 * MAX_TILT)
+    }
     const onMove = (e: PointerEvent) => {
       const target = e.target as HTMLElement
       const card = target.closest<HTMLElement>('[data-card]')
@@ -121,19 +139,13 @@ export function Services() {
         active = card
       }
       if (!card) return
-      const rect = card.getBoundingClientRect()
-      const relX = (e.clientX - rect.left) / rect.width
-      const relY = (e.clientY - rect.top) / rect.height
-      card.style.setProperty('--mx', `${relX * 100}%`)
-      card.style.setProperty('--my', `${relY * 100}%`)
-      card.dataset.active = 'true'
-      const q = quickies.get(card)
-      q?.ry((relX - 0.5) * 2 * MAX_TILT)
-      q?.rx((0.5 - relY) * 2 * MAX_TILT)
+      pending = { card, x: e.clientX, y: e.clientY }
+      if (!frame) frame = requestAnimationFrame(apply)
     }
     const onLeave = () => {
       if (active) reset(active)
       active = null
+      pending = null
     }
 
     grid.addEventListener('pointermove', onMove)
@@ -141,6 +153,7 @@ export function Services() {
     return () => {
       grid.removeEventListener('pointermove', onMove)
       grid.removeEventListener('pointerleave', onLeave)
+      if (frame) cancelAnimationFrame(frame)
     }
   }, [reducedMotion, finePointer])
 

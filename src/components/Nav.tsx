@@ -138,6 +138,13 @@ export function Nav() {
     gsap.set(header, { y: 0 })
     let lastY = window.scrollY
     let hidden = false
+    const show = () => {
+      if (!hidden) return
+      hidden = false
+      gsap.to(header, { y: 0, duration: 0.35, ease: 'power2.out', overwrite: 'auto' })
+    }
+    // Keyboard users tabbing into a hidden header get it back at once, without any scroll event.
+    header.addEventListener('focusin', show)
 
     const trigger = ScrollTrigger.create({
       start: 0,
@@ -168,7 +175,10 @@ export function Nav() {
       },
     })
 
-    return () => trigger.kill()
+    return () => {
+      header.removeEventListener('focusin', show)
+      trigger.kill()
+    }
   }, [reducedMotion])
 
   // Never let the header stay hidden while the mobile menu is open.
@@ -199,7 +209,7 @@ export function Nav() {
         className={cn('fixed inset-x-0 top-0 z-50 h-[var(--nav-height)]', scrolled ? 'glass' : 'bg-transparent')}
       >
         <div className="container-x flex h-full items-center justify-between">
-          <a href="#vrh" className="flex items-center gap-2 font-display text-2xl font-extrabold text-text">
+          <a href="#vrh" className="flex min-h-11 items-center gap-2 font-display text-2xl font-extrabold text-text">
             <Drop className="h-4 w-4 text-copper" />
             {site.wordmark}
           </a>

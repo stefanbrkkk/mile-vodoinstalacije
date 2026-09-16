@@ -33,12 +33,12 @@ export function BeforeAfter() {
     if (reducedMotion) return
     const el = wrapRef.current
     if (!el) return
-    gsap.set(el, { autoAlpha: 0, y: 24 })
+    gsap.set(el, { opacity: 0, y: 24 })
     const trigger = ScrollTrigger.create({
       trigger: el,
       start: 'top 85%',
       once: true,
-      onEnter: () => gsap.to(el, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out' }),
+      onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }),
     })
     return () => trigger.kill()
   }, [reducedMotion])
