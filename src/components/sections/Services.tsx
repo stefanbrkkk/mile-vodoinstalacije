@@ -152,7 +152,7 @@ export function Services() {
     >
       <SectionHeader index="04" id={headingId} title={site.nav[0].label} />
 
-      <div ref={gridRef} className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6 md:[grid-auto-flow:dense]">
+      <div ref={gridRef} className="mt-12 grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 md:[grid-auto-flow:dense] lg:grid-cols-3">
         {site.services.map((service) => (
           <ServiceCard key={service.id} service={service} />
         ))}
