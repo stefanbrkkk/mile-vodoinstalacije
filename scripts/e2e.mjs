@@ -4,6 +4,10 @@ import { chromium, devices } from 'playwright'
 
 const base = process.argv[2] ?? 'http://localhost:4173/'
 const results = []
+// The sandbox egress proxy intermittently breaks Google Fonts requests (TLS re-termination); these
+// are environment failures, listed separately and not counted against the site.
+const ENV_NOISE = /fonts\.(googleapis|gstatic)\.com|ERR_TOO_MANY_RETRIES|ERR_CERT_AUTHORITY_INVALID/
+const envNoise = []
 const ok = (name, pass, detail = '') => {
   results.push({ name, pass, detail })
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${name}${detail ? ' — ' + detail : ''}`)
@@ -24,11 +28,15 @@ async function open({ width, height, touch = false, rm = false, grantClipboard =
   const page = await context.newPage()
   const problems = []
   page.on('console', (m) => {
-    if (m.type() === 'error') problems.push(`[console.error] ${m.text()}`)
+    if (m.type() !== 'error') return
+    ;(ENV_NOISE.test(m.text()) ? envNoise : problems).push(`[console.error] ${m.text()}`)
   })
   page.on('pageerror', (e) => problems.push(`[pageerror] ${e.message}`))
   page.on('response', (r) => {
-    if (r.status() >= 400) problems.push(`[http ${r.status()}] ${r.url()}`)
+    if (r.status() >= 400) (ENV_NOISE.test(r.url()) ? envNoise : problems).push(`[http ${r.status()}] ${r.url()}`)
+  })
+  page.on('requestfailed', (r) => {
+    if (!ENV_NOISE.test(r.url())) problems.push(`[requestfailed] ${r.url()} ${r.failure()?.errorText ?? ''}`)
   })
   await page.goto(base, { waitUntil: 'networkidle' })
   await page.waitForTimeout(1600)
@@ -68,16 +76,24 @@ const scrollTo = async (page, y) => {
   ok('1440: punchline', (await page.getByText('Mile rešava.').count()) >= 1)
   ok('1440: no tel: links', (await page.locator('a[href^="tel:"]').count()) === 0)
   ok('1440: mailto correct', (await page.locator('a[href="mailto:stefanbrkk@gmail.com"]').count()) >= 1)
-  const fontsOk = await page.evaluate(async () => {
-    await document.fonts.ready
-    return (
-      document.fonts.check('800 20px "Bricolage Grotesque"', 'ČćŠžĐ') &&
-      document.fonts.check('italic 20px "Instrument Serif"', 'ČćŠžĐ') &&
-      document.fonts.check('400 16px "Geist"', 'ČćŠžĐ') &&
-      document.fonts.check('400 16px "JetBrains Mono"', 'ČćŠžĐ')
-    )
-  })
-  ok('1440: Google Fonts loaded with latin-ext glyphs', fontsOk)
+  const checkFonts = () =>
+    page.evaluate(async () => {
+      await document.fonts.ready
+      return (
+        document.fonts.check('800 20px "Bricolage Grotesque"', 'ČćŠžĐ') &&
+        document.fonts.check('italic 20px "Instrument Serif"', 'ČćŠžĐ') &&
+        document.fonts.check('400 16px "Geist"', 'ČćŠžĐ') &&
+        document.fonts.check('400 16px "JetBrains Mono"', 'ČćŠžĐ')
+      )
+    })
+  let fontsOk = await checkFonts()
+  if (!fontsOk) {
+    // one retry: the sandbox proxy drops the Google Fonts request intermittently
+    await page.reload({ waitUntil: 'networkidle' })
+    await page.waitForTimeout(1500)
+    fontsOk = await checkFonts()
+  }
+  ok('1440: Google Fonts loaded with latin-ext glyphs', fontsOk, fontsOk ? '' : 'fonts request blocked by sandbox proxy')
   for (const id of ['vrh', 'poverenje', 'anatomija', 'usluge', 'kako-radim', 'pre-posle', 'utisci', 'pitanja', 'kontakt']) {
     ok(`1440: section #${id} exists`, (await page.locator(`#${id}`).count()) === 1)
   }
@@ -160,9 +176,19 @@ const scrollTo = async (page, y) => {
   // process horizontal moves
   const proc = await p4.locator('#kako-radim').evaluate((el) => ({ top: el.offsetTop, h: el.offsetHeight }))
   await scrollTo(p4, proc.top + 10)
-  const x0 = await p4.locator('#kako-radim [data-process-track]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41)
+  const trackX = () =>
+    p4.locator('#kako-radim [data-panel]').first().evaluate((el) => {
+      let node = el.parentElement
+      while (node && node.id !== 'kako-radim') {
+        const t = getComputedStyle(node).transform
+        if (t && t !== 'none') return new DOMMatrix(t).m41
+        node = node.parentElement
+      }
+      return 0
+    })
+  const x0 = await trackX()
   await scrollTo(p4, proc.top + proc.h * 0.7)
-  const x1 = await p4.locator('#kako-radim [data-process-track]').evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m41)
+  const x1 = await trackX()
   ok('1440: process track moves horizontally with scroll', x1 < x0 - 100, `${x0} → ${x1}`)
   // faq
   await p4.locator('#pitanja').scrollIntoViewIfNeeded()
@@ -171,7 +197,7 @@ const scrollTo = async (page, y) => {
   const controls = await faqBtn.getAttribute('aria-controls')
   await faqBtn.click()
   await p4.waitForTimeout(500)
-  ok('1440: faq button expands + controls panel', (await faqBtn.getAttribute('aria-expanded')) === 'true' && !!controls && (await p4.locator(`#${CSS.escape ? controls : controls}`).count()) === 1)
+  ok('1440: faq button expands + controls panel', (await faqBtn.getAttribute('aria-expanded')) === 'true' && !!controls && (await p4.locator(`[id="${controls}"]`).count()) === 1 && (await p4.locator(`[id="${controls}"]`).isVisible()))
   // before/after slider keyboard
   const slider = p4.locator('#pre-posle [role="slider"]')
   ok('1440: before/after slider exists', (await slider.count()) === 1)
@@ -184,7 +210,7 @@ const scrollTo = async (page, y) => {
   // testimonials pause control
   const pauseBtn = p4.locator('#utisci button[aria-pressed]').first()
   ok('1440: testimonials pause control', (await pauseBtn.count()) >= 1)
-  const dupHidden = await p4.locator('#utisci [aria-hidden="true"] article, #utisci [aria-hidden="true"] li').count()
+  const dupHidden = await p4.locator('#utisci li[aria-hidden="true"]').count()
   ok('1440: duplicated testimonial cards are aria-hidden', dupHidden >= 4, String(dupHidden))
   // back to top
   await p4.locator('footer button', { hasText: 'Nazad na vrh' }).click()
@@ -286,5 +312,6 @@ for (const [width, height] of [
 
 await browser.close()
 const failed = results.filter((r) => !r.pass)
+if (envNoise.length) console.log(`\nEnvironment noise (ignored, sandbox proxy): ${envNoise.length} font-related request failures`)
 console.log(`\n${results.length - failed.length}/${results.length} checks passed`)
 if (failed.length) process.exitCode = 1

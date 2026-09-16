@@ -180,7 +180,7 @@ export function Pipe() {
   if (isMobile) {
     if (reduced) return null
     return (
-      <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-[3px] bg-line/40">
+      <div aria-hidden="true" data-progress-bar="" className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-[3px] bg-line/40">
         <div ref={barRef} className="h-full origin-left bg-water" style={{ transform: 'scaleX(0)' }} />
       </div>
     )

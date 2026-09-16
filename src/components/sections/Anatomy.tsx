@@ -48,7 +48,7 @@ function CardBody({ step, compact }: { step: AnatomyStep; compact?: boolean }) {
 function ProgressRow({ counterRef, className }: { counterRef: Ref<HTMLSpanElement>; className?: string }) {
   return (
     <div aria-hidden="true" className={cn('flex items-center gap-4', className)}>
-      <span ref={counterRef} className="font-mono text-sm tracking-[0.08em] text-water">
+      <span ref={counterRef} data-anatomy-counter="" className="font-mono text-sm tracking-[0.08em] text-water">
         {stepNumber(0)}/0{STEPS.length}
       </span>
       <span className="flex gap-2">

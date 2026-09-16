@@ -17,12 +17,26 @@ const SIZE_CLASSES: Record<NonNullable<Service['size']> | 'default', string> = {
 }
 
 function ServiceCard({ service }: { service: Service }) {
+  const size = service.size
   return (
-    <div className={cn('[perspective:1200px]', SIZE_CLASSES[service.size ?? 'default'])}>
+    <div className={cn('[perspective:1200px]', SIZE_CLASSES[size ?? 'default'])}>
       <article
         data-card=""
         className="group gpu panel relative flex h-full flex-col gap-5 overflow-hidden p-6 motion-safe:transition-transform motion-safe:duration-300 md:p-7"
       >
+        {/* Large faint watermark: fills the extra room a wide/tall card has, technical-drawing style. */}
+        {size === 'wide' || size === 'tall' ? (
+          <ServiceIcon
+            icon={service.icon}
+            monochrome
+            className={cn(
+              'pointer-events-none absolute hidden text-copper opacity-[0.12] md:block',
+              size === 'wide' && '-right-6 -bottom-8 h-44 w-44 lg:h-52 lg:w-52',
+              size === 'tall' && '-bottom-6 left-1/2 h-40 w-40 -translate-x-1/2 lg:h-48 lg:w-48',
+            )}
+          />
+        ) : null}
+
         {/* Cursor spotlight: position set from JS via --mx/--my, visibility from data-active. */}
         <div
           aria-hidden="true"
@@ -32,7 +46,7 @@ function ServiceCard({ service }: { service: Service }) {
               'radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgb(63 197 240 / 0.1), transparent 70%)',
           }}
         />
-        <ServiceIcon icon={service.icon} className="relative h-8 w-8 text-copper md:h-9 md:w-9" />
+        <ServiceIcon icon={service.icon} className="relative h-9 w-9 text-copper" />
         <div className="relative">
           <h3 className="display-md text-text">{service.title}</h3>
           <p className="mt-2 text-[0.95rem] leading-relaxed text-muted">{service.description}</p>
