@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-ssr
+*.local
+.vercel
+.DS_Store
+npm-debug.log*
+/test-results
+/reports/*.json
+/reports/*.html
