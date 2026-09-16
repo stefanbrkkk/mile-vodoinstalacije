@@ -64,3 +64,12 @@ export function ringsPath(points: Point[], r = 8): string {
     })
     .join(' ')
 }
+
+/** Drawing space of the faucet; the page pipe aligns to these user units. */
+export const FAUCET_VIEW = { width: 320, height: 220 } as const
+/** Where the page pipe enters the faucet (top of its supply stub). */
+export const FAUCET_INLET = { x: 40, y: 4 } as const
+/** Tip of the spout, where the drop is born. */
+export const FAUCET_SPOUT = { x: 248, y: 108 } as const
+/** Pivot of the lever handle, in faucet user units. */
+export const FAUCET_PIVOT = '150 94'

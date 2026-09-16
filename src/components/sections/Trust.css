@@ -1,0 +1,24 @@
+/* Seamless marquee: the track renders the service list twice back-to-back and shifts
+   by exactly half its own width, so the loop never visibly jumps. */
+@keyframes mile-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.trust-marquee-track {
+  animation: mile-marquee 32s linear infinite;
+}
+
+.trust-marquee-track[data-paused='true'] {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-marquee-track {
+    animation: none;
+  }
+}
