@@ -3,6 +3,7 @@ import { useOnScreen, useReducedMotion } from '@/lib/motion'
 import { site, type Testimonial } from '@/config/site'
 import { SectionHeader } from '@/components/SectionHeader'
 import { StarRating } from '@/components/svg/Star'
+import { cn } from '@/lib/utils'
 import './Testimonials.css'
 
 /** Split into two rows of four for the pair of counter-moving marquees. */
@@ -25,6 +26,31 @@ function PlayIcon() {
     <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" focusable="false">
       <path d="M7 5v14l12-7Z" fill="currentColor" />
     </svg>
+  )
+}
+
+function PauseToggle({
+  pausedByUser,
+  onToggle,
+  className,
+}: {
+  pausedByUser: boolean
+  onToggle: () => void
+  className?: string
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={pausedByUser}
+      aria-label={pausedByUser ? 'Pokreni utiske' : 'Zaustavi utiske'}
+      onClick={onToggle}
+      className={cn(
+        'h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-ink text-text transition-colors hover:border-water/60',
+        className,
+      )}
+    >
+      {pausedByUser ? <PlayIcon /> : <PauseIcon />}
+    </button>
   )
 }
 
@@ -63,20 +89,19 @@ function MarqueeRow({ items, duration, reverse, paused }: (typeof ROWS)[number] 
 }
 
 /**
- * "Utisci": two counter-scrolling rows of demo reviews. Pauses on hover, on keyboard focus
- * within the rows (the toggle button lives inside the observed wrapper), off-screen, and via
- * an explicit pause/play button. Reduced motion swaps the whole thing for a static grid.
+ * "Utisci": two counter-scrolling rows of demo reviews. Pauses on hover, off-screen, and via
+ * an explicit pause/play button (shown once per breakpoint: inline with the title on md+,
+ * below the demo note on mobile). Reduced motion swaps the whole thing for a static grid.
  */
 export function Testimonials() {
   const reducedMotion = useReducedMotion()
   const headingId = useId()
   const wrapRef = useRef<HTMLDivElement | null>(null)
-  const toggleRef = useRef<HTMLButtonElement | null>(null)
   const [hovered, setHovered] = useState(false)
-  const [focused, setFocused] = useState(false)
   const [pausedByUser, setPausedByUser] = useState(false)
   const onScreen = useOnScreen(wrapRef)
-  const paused = hovered || focused || pausedByUser || !onScreen
+  const paused = hovered || pausedByUser || !onScreen
+  const toggle = () => setPausedByUser((v) => !v)
 
   return (
     <section
@@ -84,8 +109,16 @@ export function Testimonials() {
       className="container-x scroll-mt-[var(--nav-height)] py-24 md:py-32"
       aria-labelledby={headingId}
     >
-      <SectionHeader index="07" id={headingId} title={site.nav[2].label} />
+      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-6">
+        <SectionHeader index="07" id={headingId} title={site.nav[2].label} />
+        {reducedMotion ? null : (
+          <PauseToggle pausedByUser={pausedByUser} onToggle={toggle} className="hidden md:mb-1 md:flex" />
+        )}
+      </div>
       <p className="label-mono mt-3">{site.demoNote}</p>
+      {reducedMotion ? null : (
+        <PauseToggle pausedByUser={pausedByUser} onToggle={toggle} className="mt-3 flex md:hidden" />
+      )}
 
       {reducedMotion ? (
         <ul className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -99,30 +132,10 @@ export function Testimonials() {
           className="relative mt-10 flex flex-col gap-5 overflow-hidden py-2"
           onPointerEnter={() => setHovered(true)}
           onPointerLeave={() => setHovered(false)}
-          onFocus={(e) => {
-            // The toggle button is the only focusable thing in here; its own focus is
-            // already reflected by aria-pressed, so it should not also force a pause
-            // that a "play" click on it could then never lift.
-            if ((e.target as HTMLElement) !== toggleRef.current) setFocused(true)
-          }}
-          onBlur={(e) => {
-            if ((e.target as HTMLElement) !== toggleRef.current) setFocused(false)
-          }}
         >
           {ROWS.map((row) => (
             <MarqueeRow key={row.duration} {...row} paused={paused} />
           ))}
-
-          <button
-            ref={toggleRef}
-            type="button"
-            aria-pressed={pausedByUser}
-            aria-label={pausedByUser ? 'Pokreni utiske' : 'Zaustavi utiske'}
-            onClick={() => setPausedByUser((v) => !v)}
-            className="absolute top-1/2 right-2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md border border-line bg-ink text-text shadow-[0_0_28px_14px_rgb(7_19_31)] md:right-4"
-          >
-            {pausedByUser ? <PlayIcon /> : <PauseIcon />}
-          </button>
         </div>
       )}
     </section>

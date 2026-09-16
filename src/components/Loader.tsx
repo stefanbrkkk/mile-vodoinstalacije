@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { gsap } from '@/lib/gsap'
 import { useGsap } from '@/lib/useGsap'
 import { useReducedMotion } from '@/lib/motion'
-import { introAlreadySeen, markIntroSeen } from '@/lib/intro'
+import { shouldSkipIntro, markIntroSeen } from '@/lib/intro'
 import { Drop } from '@/components/svg/Drop'
 
 /** Hard cap: onDone always fires by this time, even if the animation stalls (backgrounded tab). */
@@ -17,7 +17,7 @@ type Props = { onDone: () => void }
  */
 export function Loader({ onDone }: Props) {
   const reducedMotion = useReducedMotion()
-  const [skip] = useState(() => introAlreadySeen() || reducedMotion)
+  const [skip] = useState(() => shouldSkipIntro() || reducedMotion)
   const [visible, setVisible] = useState(() => !skip)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const dropRef = useRef<SVGSVGElement | null>(null)

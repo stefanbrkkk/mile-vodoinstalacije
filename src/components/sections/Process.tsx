@@ -39,14 +39,14 @@ function Panel({
     >
       {layout === 'stack' ? (
         <>
-          <span className="font-mono text-3xl leading-none text-line group-data-[state=on]:text-water md:text-4xl">
+          <span className="font-mono text-3xl leading-none text-muted/60 group-data-[state=on]:text-water md:text-4xl">
             {stepNumber(index)}
           </span>
           <ProcessGlyph kind={glyph} className="mx-auto my-5 size-[6.5rem] md:size-28" />
         </>
       ) : (
         <div className="flex items-center justify-between gap-4">
-          <span className="font-mono text-3xl leading-none text-line group-data-[state=on]:text-water md:text-4xl">
+          <span className="font-mono text-3xl leading-none text-muted/60 group-data-[state=on]:text-water md:text-4xl">
             {stepNumber(index)}
           </span>
           <ProcessGlyph kind={glyph} className="size-[72px] shrink-0" />

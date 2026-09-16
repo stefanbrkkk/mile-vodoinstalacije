@@ -16,7 +16,7 @@ import { Caustics } from '@/components/svg/Caustics'
 import { HeroElbow } from '@/components/svg/HeroElbow'
 import { Drop } from '@/components/svg/Drop'
 
-type Props = { introDone: boolean }
+type Props = { introDone: boolean; /** False when the bundle arrived late: words are simply shown, no drop-in. */ entrance?: boolean }
 
 const PARALLAX_RANGE = 28 // total px range -> roughly ±14px
 
@@ -50,7 +50,7 @@ function ScrollHint({ reducedMotion }: { reducedMotion: boolean }) {
   )
 }
 
-export function Hero({ introDone }: Props) {
+export function Hero({ introDone, entrance = true }: Props) {
   const reducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
   const finePointer = useFinePointer()
@@ -65,7 +65,7 @@ export function Hero({ introDone }: Props) {
   // intro loader was skipped). Reduced motion: no gsap.set ever runs, so the natural
   // (untransformed) DOM is the final, fully visible state from first paint.
   useGsap(() => {
-    if (reducedMotion) return
+    if (reducedMotion || !entrance) return
     const words = wordRefs.current.filter((el): el is HTMLSpanElement => !!el)
     const punchline = punchlineRef.current
     if (!words.length) return
@@ -81,7 +81,7 @@ export function Hero({ introDone }: Props) {
     return () => {
       tl.kill()
     }
-  }, [introDone, reducedMotion])
+  }, [introDone, reducedMotion, entrance])
 
   // Light mouse parallax on the copper elbow (fine pointers, motion allowed, only over the section).
   useGsap(() => {

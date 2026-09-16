@@ -97,7 +97,7 @@ export function BeforeAfter() {
       <div ref={wrapRef} className="mt-12">
         <div
           ref={trackRef}
-          className="relative aspect-[8/5] w-full touch-none overflow-hidden rounded-lg border border-line select-none"
+          className="relative aspect-[800/460] w-full touch-none overflow-hidden rounded-lg border border-line select-none"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}

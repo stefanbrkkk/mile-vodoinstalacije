@@ -84,13 +84,14 @@ function Bracket({ before }: { before: boolean }) {
 }
 
 /** Technical guide lines and a faint tile grid, shared by both variants. */
-function GuideLines() {
+function GuideLines({ variant }: { variant: Variant }) {
+  const tileId = `ba-tiles-${variant}`
   return (
     <g fill="none">
-      <pattern id="ba-tiles" width={40} height={40} patternUnits="userSpaceOnUse">
+      <pattern id={tileId} width={40} height={40} patternUnits="userSpaceOnUse">
         <path d="M40 0 V40 H0" stroke={TUBE.guide} strokeWidth={1} />
       </pattern>
-      <rect width={VIEW.width} height={VIEW.height} fill="url(#ba-tiles)" opacity={0.14} />
+      <rect width={VIEW.width} height={VIEW.height} fill={`url(#${tileId})`} opacity={0.14} />
       <g stroke={TUBE.guide} strokeWidth={1} opacity={0.4}>
         <line x1={JOINT_CX + 40} y1={0} x2={JOINT_CX + 40} y2={VIEW.height} strokeDasharray="4 9" />
         <line x1={0} y1={FLOOR_Y} x2={VIEW.width} y2={FLOOR_Y} strokeWidth={1.6} opacity={1} />
@@ -126,7 +127,7 @@ export function BeforeAfterScene({ variant, className }: { variant: Variant; cla
       </defs>
 
       <rect width={VIEW.width} height={VIEW.height} fill={`url(#ba-wall-${variant})`} />
-      <GuideLines />
+      <GuideLines variant={variant} />
 
       {before ? (
         <g>

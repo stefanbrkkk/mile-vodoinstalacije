@@ -228,6 +228,13 @@
     transform: translateY(0);
   }
 
+  /* Static hero shell (index.html): stays invisible for 0.7s so a fast load never flashes before
+     the intro; on a slow network it fades in and the app then skips the intro (see src/lib/intro.ts). */
+  .shell-reveal {
+    opacity: 0;
+    animation: shell-in 0.5s ease-out 0.7s forwards;
+  }
+
   .sr-only-dup {
     /* Duplicated marquee items: visible but hidden from assistive tech via aria-hidden. */
     user-select: none;
@@ -244,6 +251,12 @@
   .gpu {
     will-change: transform;
     backface-visibility: hidden;
+  }
+}
+
+@keyframes shell-in {
+  to {
+    opacity: 1;
   }
 }
 

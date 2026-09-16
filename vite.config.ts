@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 import { site, seoTitle, seoDescription, jsonLd } from './src/config/site.ts'
 
-/** Injects SEO/OG meta tags and JSON-LD into the served HTML (dev and build) from src/config/site.ts. */
+/** Injects SEO/OG meta tags, JSON-LD and the static hero shell text into the served HTML (dev and build) from src/config/site.ts. */
 function seoPlugin(): Plugin {
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
   return {
@@ -24,7 +24,21 @@ function seoPlugin(): Plugin {
         `<meta name="twitter:description" content="${esc(seoDescription)}">`,
         `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`,
       ].filter(Boolean)
-      return html.replace('<!--seo-->', tags.join('\n    '))
+      const shell: Record<string, string> = {
+        wordmark: site.wordmark,
+        heroWord1: site.hero.words[0],
+        heroWord2: site.hero.words[1],
+        heroWord3: site.hero.words[2],
+        heroPunchline: site.hero.punchline,
+        heroSubtitle: site.hero.subtitle,
+        ctaPrimaryHref: site.cta.primary.href,
+        ctaPrimaryLabel: site.cta.primary.label,
+        ctaSecondaryHref: site.cta.secondary.href,
+        ctaSecondaryLabel: site.cta.secondary.label,
+      }
+      return html
+        .replace('<!--seo-->', tags.join('\n    '))
+        .replace(/\{\{(\w+)\}\}/g, (_, key: string) => esc(shell[key] ?? ''))
     },
   }
 }
