@@ -48,11 +48,11 @@ export function ProcessGlyph({ kind, className }: { kind: GlyphKind; className?:
 
       {kind === 'diagnose' ? (
         <g>
-          <path {...COPPER} d="M8 56 H112 M8 72 H112" />
+          <path {...COPPER} d="M12 56 H108 M12 72 H108" />
           <path {...COPPER} d="M46 48 H74 V80 H46 Z" fill={TUBE.cavity} />
           <path {...COPPER} strokeWidth="1.8" opacity="0.55" d="M54 51 V77 M66 51 V77" />
           <circle {...COPPER} cx="62" cy="54" r="30" />
-          <path {...COPPER} strokeWidth="4.4" d="M83 75 L102 94" />
+          <path {...COPPER} strokeWidth="4.4" d="M83 75 L104 96" />
           <path {...ACCENT} strokeWidth="2.6" d="M42 50 A 20 20 0 0 1 56 36" />
           <path fill={TUBE.water} d="M60 86 c -5 6 -7 9 -7 12 a 7 7 0 0 0 14 0 c 0 -3 -2 -6 -7 -12 Z" />
         </g>
