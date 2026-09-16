@@ -8,13 +8,48 @@
     <!--seo-->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts load without blocking the first paint (swap); the noscript copy keeps them for JS-off. -->
     <link
-      rel="stylesheet"
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Geist:wght@400;500&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Geist:wght@400;500&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap"
+      />
+    </noscript>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static shell painted before the bundle runs; React replaces it on mount. Text comes from src/config/site.ts. -->
+      <header class="fixed inset-x-0 top-0 z-50 h-[var(--nav-height)]">
+        <div class="container-x flex h-full items-center">
+          <span class="font-display text-2xl font-800 tracking-[-0.03em] text-text">{{wordmark}}</span>
+        </div>
+      </header>
+      <main>
+        <section class="relative flex min-h-svh items-stretch overflow-hidden pt-[var(--nav-height)]">
+          <div class="shell-reveal container-x relative flex w-full flex-col justify-center gap-8 py-16">
+            <div>
+              <h1 class="display-xl text-text">
+                <span class="block">{{heroWord1}}</span>
+                <span class="block">{{heroWord2}}</span>
+                <span class="block">{{heroWord3}}</span>
+              </h1>
+              <p class="serif-accent mt-2 text-[clamp(2.1rem,8.05vw,6.3rem)] leading-[0.95] text-water">{{heroPunchline}}</p>
+            </div>
+            <p class="max-w-[34ch] text-[1.05rem] leading-relaxed text-muted md:text-[1.15rem]">{{heroSubtitle}}</p>
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <a class="inline-flex min-h-13 w-full items-center justify-center rounded-md bg-copper px-7 text-base font-medium text-ink sm:w-auto" href="{{ctaPrimaryHref}}">{{ctaPrimaryLabel}}</a>
+              <a class="inline-flex min-h-13 w-full items-center justify-center rounded-md border border-line bg-surface/40 px-7 text-base font-medium text-text sm:w-auto" href="{{ctaSecondaryHref}}">{{ctaSecondaryLabel}}</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

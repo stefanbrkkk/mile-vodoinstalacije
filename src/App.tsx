@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react'
 import { ScrollProvider } from '@/lib/ScrollProvider'
 import { Loader } from '@/components/Loader'
-import { introAlreadySeen } from '@/lib/intro'
-import { Cursor } from '@/components/Cursor'
+import { appMountedLate, shouldSkipIntro } from '@/lib/intro'
 import { Nav } from '@/components/Nav'
 import { Pipe } from '@/components/Pipe'
 import { Hero } from '@/components/sections/Hero'
@@ -18,7 +17,9 @@ import { Footer } from '@/components/sections/Footer'
 
 export default function App() {
   // Hero entrance waits for the intro loader; when the loader is skipped it starts at once.
-  const [introDone, setIntroDone] = useState(() => introAlreadySeen())
+  // A late-arriving bundle (slow network) skips both so the content is simply there.
+  const [introDone, setIntroDone] = useState(() => shouldSkipIntro())
+  const [entrance] = useState(() => !appMountedLate())
   const onIntroDone = useCallback(() => setIntroDone(true), [])
 
   return (
@@ -27,11 +28,10 @@ export default function App() {
         Preskoči na sadržaj
       </a>
       <Loader onDone={onIntroDone} />
-      <Cursor />
       <Nav />
       <Pipe />
       <main id="main" className="relative z-10">
-        <Hero introDone={introDone} />
+        <Hero introDone={introDone} entrance={entrance} />
         <Trust />
         <Anatomy />
         <Services />
