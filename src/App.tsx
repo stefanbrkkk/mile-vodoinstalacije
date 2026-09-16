@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react'
 import { ScrollProvider } from '@/lib/ScrollProvider'
 import { Loader } from '@/components/Loader'
 import { introAlreadySeen } from '@/lib/intro'
-import { Cursor } from '@/components/Cursor'
 import { Nav } from '@/components/Nav'
 import { Pipe } from '@/components/Pipe'
 import { Hero } from '@/components/sections/Hero'
@@ -27,7 +26,6 @@ export default function App() {
         Preskoči na sadržaj
       </a>
       <Loader onDone={onIntroDone} />
-      <Cursor />
       <Nav />
       <Pipe />
       <main id="main" className="relative z-10">
