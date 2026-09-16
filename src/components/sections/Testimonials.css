@@ -1,0 +1,32 @@
+/* Seamless marquee: each row renders its testimonials twice back-to-back and shifts by
+   exactly half its own width, so the loop never visibly jumps. `data-reverse` flips the
+   playback direction (CSS `animation-direction: reverse`) so row two drifts the other way
+   using the same keyframes. */
+@keyframes mile-testimonial-track {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonial-track {
+  animation-name: mile-testimonial-track;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.testimonial-track[data-reverse='true'] {
+  animation-direction: reverse;
+}
+
+.testimonial-track[data-paused='true'] {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-track {
+    animation: none;
+  }
+}

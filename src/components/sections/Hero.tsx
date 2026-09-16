@@ -113,20 +113,22 @@ export function Hero({ introDone }: Props) {
     >
       <Caustics animate={!reducedMotion && !isMobile} className="absolute inset-0 z-0 h-full w-full" />
 
+      {/* Always absolute/out-of-flow: the section is a flex row, so anything else here
+          would become a flex item and shove the text column sideways. */}
       <HeroElbow
         ref={elbowRef}
         className={cn(
-          'pointer-events-none relative z-0 mx-auto mb-4 h-28 w-28 shrink-0 opacity-80',
-          // Tablet: kept small and tucked into the bottom-right corner, clear of the text band.
-          'md:absolute md:bottom-[-30px] md:right-[-40px] md:top-auto md:mx-0 md:mb-0 md:h-[300px] md:w-[300px] md:translate-y-0 md:opacity-40',
+          'pointer-events-none absolute right-[-30px] top-14 z-0 h-40 w-40 opacity-[0.55]',
+          // Tablet: bigger, tucked into the bottom-right corner, clear of the text band.
+          'md:top-auto md:bottom-[-30px] md:right-[-40px] md:h-[300px] md:w-[300px] md:opacity-40',
           // Desktop: the full dramatic elbow, vertically centred and partly cropped by the edge.
-          'lg:bottom-auto lg:right-[-60px] lg:top-1/2 lg:h-[520px] lg:w-[520px] lg:-translate-y-1/2 lg:opacity-100',
+          'lg:bottom-auto lg:top-1/2 lg:right-[-60px] lg:h-[520px] lg:w-[520px] lg:-translate-y-1/2 lg:opacity-100',
         )}
       />
 
       <div className="container-x relative z-10 flex w-full flex-col justify-center gap-8 py-16">
         <div>
-          <h1 className="display-xl max-[400px]:text-[2.6rem] text-text">
+          <h1 className="display-xl text-text">
             {site.hero.words.map((word, i) => (
               <span key={word} className="block overflow-hidden">
                 <span

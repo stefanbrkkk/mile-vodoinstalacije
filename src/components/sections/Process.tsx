@@ -15,11 +15,22 @@ function stepNumber(index: number) {
   return `0${index + 1}`
 }
 
-function Panel({ step, index, className }: { step: ProcessStep; index: number; className?: string }) {
+function Panel({
+  step,
+  index,
+  className,
+  active = false,
+}: {
+  step: ProcessStep
+  index: number
+  className?: string
+  /** Reduced motion shows every step already reached by the water line. */
+  active?: boolean
+}) {
   return (
     <article
       data-panel=""
-      data-state="off"
+      data-state={active ? 'on' : 'off'}
       className={cn(
         'panel group relative flex flex-col justify-between gap-6 p-6 data-[state=on]:border-water/45 md:p-8',
         className,
@@ -153,9 +164,9 @@ export function Process() {
             <li key={step.title} className="relative">
               <span
                 aria-hidden="true"
-                className="absolute top-8 -left-9 size-[19px] translate-x-[-2px] rounded-full border-2 border-copper bg-ink"
+                className="absolute top-8 -left-9 size-[19px] translate-x-[1px] rounded-full border-2 border-copper bg-ink"
               />
-              <Panel step={step} index={i} className="min-h-[9rem]" />
+              <Panel step={step} index={i} active={reduced} className="min-h-[9rem]" />
             </li>
           ))}
         </ol>
@@ -189,7 +200,7 @@ export function Process() {
                     key={step.title}
                     step={step}
                     index={i}
-                    className="h-[min(46vh,23rem)] w-[min(70vw,560px)] shrink-0"
+                    className="h-[min(52vh,25rem)] w-[min(70vw,560px)] shrink-0"
                   />
                 ))}
               </div>

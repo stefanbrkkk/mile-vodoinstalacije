@@ -261,7 +261,7 @@ export function Contact() {
                   <a
                     ref={emailRef}
                     href={`mailto:${site.email}`}
-                    className="display-md break-anywhere min-h-11 text-water hover:text-text"
+                    className="display-md break-anywhere min-h-11 text-[1.15rem] text-water hover:text-text sm:text-[1.5rem] md:text-[2rem]"
                   >
                     {site.email}
                   </a>

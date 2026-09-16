@@ -118,7 +118,8 @@ export function Anatomy() {
 
       const sync = () => {
         const time = tl.time()
-        const index = Math.min(STEPS.length - 1, Math.max(0, Math.floor(time / STEP_SPAN)))
+        // The counter flips with the card cross-fade, not with the part motion.
+        const index = Math.min(STEPS.length - 1, Math.max(0, Math.floor((time - 0.25) / STEP_SPAN)))
         const inFinale = time >= FINALE_AT + 0.35
         if (index === lastIndex && inFinale === lastFinale) return
         lastIndex = index
@@ -203,22 +204,22 @@ export function Anatomy() {
             </div>
           )}
 
-          <div className="container-x flex min-h-0 flex-1 flex-col gap-3 md:flex-row md:items-center md:gap-10 md:pt-6">
-            <div className="relative flex min-h-0 flex-1 items-center justify-center md:basis-[55%]">
+          <div className="container-x flex min-h-0 flex-1 flex-col gap-3 md:gap-5 lg:flex-row lg:items-center lg:gap-10 lg:pt-4">
+            <div className="relative flex min-h-0 flex-1 items-center justify-center lg:basis-[55%]">
               <div data-assembly-glow="" className="glow-water" style={{ opacity: 0 }} />
-              <AnatomyAssembly className="relative h-full max-h-[min(38svh,300px)] w-auto md:max-h-full" />
+              <AnatomyAssembly className="relative h-full max-h-[min(42svh,340px)] w-auto md:max-h-[46svh] lg:max-h-full" />
             </div>
 
-            <div className="flex flex-none flex-col gap-3 md:min-h-0 md:flex-1 md:basis-[45%] md:justify-center md:gap-5">
+            <div className="flex flex-none flex-col gap-3 lg:min-h-0 lg:flex-1 lg:basis-[45%] lg:justify-center lg:gap-5">
               <ProgressRow counterRef={counterRef} />
-              <div className="relative min-h-[13.5rem] md:min-h-[17rem]">
+              <div className="relative min-h-[13.5rem] md:min-h-[15rem] lg:min-h-[17rem]">
                 {STEPS.map((step, i) => (
                   <div
                     key={step.id}
                     data-card=""
                     aria-hidden={i !== 0}
                     className={cn(
-                      'panel absolute inset-x-0 top-0 p-4 md:p-6',
+                      'panel absolute inset-x-0 top-0 p-4 md:p-5 lg:p-6',
                       i === 0 ? 'opacity-100' : 'opacity-0',
                     )}
                   >
