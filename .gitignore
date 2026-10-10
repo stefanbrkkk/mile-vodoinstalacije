@@ -9,3 +9,21 @@ npm-debug.log*
 /reports/*
 !/reports/final/
 !/reports/CHECKLIST.md
+
+# Credentials and local environment configuration
+.env*
+!.env.example
+!.env.sample
+
+# Credentials and local request captures
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.har
+cookies.txt
+cookies*.txt
